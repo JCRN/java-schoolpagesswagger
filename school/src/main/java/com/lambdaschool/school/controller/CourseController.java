@@ -2,9 +2,7 @@ package com.lambdaschool.school.controller;
 
 import com.lambdaschool.school.model.Course;
 import com.lambdaschool.school.service.CourseService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -47,6 +45,9 @@ public class CourseController
         return new ResponseEntity<>(myCourses, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Return a Count of Students in Courses",
+            response = Course.class,
+            responseContainer = "List")
     @GetMapping(value = "/studcount",
             produces = {"application/json"})
     public ResponseEntity<?> getCountStudentsInCourses()
@@ -54,8 +55,18 @@ public class CourseController
         return new ResponseEntity<>(courseService.getCountStudentsInCourse(), HttpStatus.OK);
     }
 
+    @ApiOperation(value="Deletes a Course Based on Id",
+            response = void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Course Successfully Deleted",
+                    response = void.class)
+    })
     @DeleteMapping("/courses/{courseid}")
     public ResponseEntity<?> deleteCourseById(
+            @ApiParam(value = "Course Id",
+                    required = true,
+                    example = "1")
             @PathVariable
                     long courseid)
     {

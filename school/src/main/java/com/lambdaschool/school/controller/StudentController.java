@@ -64,10 +64,22 @@ public class StudentController
         return new ResponseEntity<>(r, HttpStatus.OK);
     }
 
-
+    @ApiOperation(value = "Get Student Associated with the Student Name",
+            response = Student.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Student Found",
+                    response = Student.class),
+            @ApiResponse(code = 404,
+                    message = "Student Not Found",
+                    response = ErrorDetail.class)
+    })
     @GetMapping(value = "/student/namelike/{name}",
                 produces = {"application/json"})
     public ResponseEntity<?> getStudentByNameContaining(
+            @ApiParam(value = "Student Name",
+                    required = true,
+                    example = "Some Name")
             @PathVariable String name)
     {
         List<Student> myStudents = studentService.findStudentByNameLike(name);
@@ -95,7 +107,10 @@ public class StudentController
         return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
-
+    @ApiOperation(value = "Updates a student based on id", notes = "Newly Created student id sent in response header", response = void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Student Updated Successfully", response = void.class),
+    })
     @PutMapping(value = "/Student/{Studentid}")
     public ResponseEntity<?> updateStudent(
             @RequestBody
@@ -108,9 +123,15 @@ public class StudentController
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @ApiOperation(value = "Deletes Student Associated with Student Id",  response = void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Student Deleted Successfully", response = void.class),
+    })
     @DeleteMapping("/Student/{Studentid}")
     public ResponseEntity<?> deleteStudentById(
+            @ApiParam(value = "Student Id",
+                    required = true,
+                    example = "1")
             @PathVariable
                     long Studentid)
     {
