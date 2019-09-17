@@ -3,6 +3,8 @@ package com.lambdaschool.school.controller;
 import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,11 @@ public class StudentController
     private StudentService studentService;
 
     // Please note there is no way to add students to course yet!
-
+    // http://localhost:2019/students/students/?sort=studname,asc&page=0&size=3
     @GetMapping(value = "/students", produces = {"application/json"})
-    public ResponseEntity<?> listAllStudents()
+    public ResponseEntity<?> listAllStudents(@PageableDefault(page = 0, size = 3) Pageable pageable)
     {
-        List<Student> myStudents = studentService.findAll();
+        List<Student> myStudents = studentService.findAll(pageable);
         return new ResponseEntity<>(myStudents, HttpStatus.OK);
     }
 
