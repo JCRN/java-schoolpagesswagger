@@ -22,6 +22,7 @@ public class Swagger2Config
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.lambdaschool.school"))
                 .paths(PathSelectors.regex("/.*"))
+                .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false)
                 .ignoredParameterTypes(Pageable.class)
