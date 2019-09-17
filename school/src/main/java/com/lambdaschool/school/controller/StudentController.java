@@ -1,7 +1,9 @@
 package com.lambdaschool.school.controller;
 
+import com.lambdaschool.school.model.ErrorDetail;
 import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.service.StudentService;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +27,20 @@ public class StudentController
 
     // Please note there is no way to add students to course yet!
     // http://localhost:2019/students/students/?sort=studname,asc&page=0&size=3
+    @ApiOperation(value = "return all students using Paging and Sorting",
+            response = Student.class,
+            responseContainer = "List")
+    @ApiImplicitParams({@ApiImplicitParam(name = "page",
+            dataType = "integer",
+            paramType = "query",
+            value = "Results page you want to retrieve(0...N)"), @ApiImplicitParam(name = "size",
+            dataType = "integer",
+            paramType = "query",
+            value = "Number of records " + "per page"), @ApiImplicitParam(name = "sort",
+            allowMultiple = true,
+            dataType = "string",
+            paramType = "query",
+            value = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple " + "sort criteria are suported")})
     @GetMapping(value = "/students", produces = {"application/json"})
     public ResponseEntity<?> listAllStudents(@PageableDefault(page = 0, size = 3) Pageable pageable)
     {
@@ -32,9 +48,15 @@ public class StudentController
         return new ResponseEntity<>(myStudents, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Retrieve student associated with the student id.", response = Student.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Student Found", response = Student.class),
+            @ApiResponse(code = 404, message = "Student Not Found", response = ErrorDetail.class)
+    })
     @GetMapping(value = "/Student/{StudentId}",
                 produces = {"application/json"})
     public ResponseEntity<?> getStudentById(
+            @ApiParam(value = "Student Id", required = true, example = "1")
             @PathVariable
                     Long StudentId)
     {
@@ -52,7 +74,10 @@ public class StudentController
         return new ResponseEntity<>(myStudents, HttpStatus.OK);
     }
 
-
+    @ApiOperation(value = "Creates a new Student", response = void.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Student Created Successfully", response = void.class),
+            @ApiResponse(code = 500, message = "Error Creating Student", response = ErrorDetail.class)    })
     @PostMapping(value = "/Student",
                  consumes = {"application/json"},
                  produces = {"application/json"})
@@ -75,6 +100,7 @@ public class StudentController
     public ResponseEntity<?> updateStudent(
             @RequestBody
                     Student updateStudent,
+            @ApiParam(value = "Student id", required = true, example = "1")
             @PathVariable
                     long Studentid)
     {
